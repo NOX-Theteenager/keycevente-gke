@@ -1,0 +1,41 @@
+# 1. Configuration du Cloud CDN
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: keycevente-cdn-config
+spec:
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: true
+      includeQueryString: true
+
+---
+# 2. Le Certificat TLS Automatique
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: keycevente-tls-cert
+spec:
+  domains:
+    - keycevente.duckdns.org
+
+---
+# 3. L'Ingress (Le Load Balancer GCP)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycevente-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    # Fait le lien avec l'IP publique créée par Terraform :
+    kubernetes.io/ingress.global-static-ip-name: "keycevente-public-ip"
+    # Fait le lien avec le certificat TLS ci-dessus :
+    networking.gke.io/managed-certificates: "keycevente-tls-cert"
+spec:
+  defaultBackend:
+    service:
+      name: keycevente-service
+      port:
+        number: 80

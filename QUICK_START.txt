@@ -1,0 +1,238 @@
+================================================================================
+                         KEYCEVENTE - E-COMMERCE MVP
+                            Quick Start Guide
+================================================================================
+
+🎯 DÉMARRAGE RAPIDE AVEC DOCKER (RECOMMANDÉ)
+
+Étape 1: Préparer l'environnement
+  $ cp .env.example .env.local
+
+Étape 2: Démarrer tous les services
+  $ docker-compose up -d
+
+Étape 3: Vérifier que tout est actif
+  $ docker-compose ps
+
+Étape 4: Accéder à l'application
+  Frontend: http://localhost:3000
+  API:      http://localhost:3000/api/categories
+
+Étape 5: Arrêter quand c'est fini
+  $ docker-compose down
+
+================================================================================
+
+📚 DOCUMENTATION COMPLÈTE
+
+  - README_KEYCEVENTE.md     : Guide détaillé complet
+  - DEPLOYMENT.md             : Guide de déploiement production
+  - PROJECT_SUMMARY.md        : Résumé du projet et architecture
+
+================================================================================
+
+🛠️ COMMANDES UTILES
+
+Avec Docker Compose:
+  docker-compose up -d          # Démarrer
+  docker-compose down           # Arrêter
+  docker-compose logs -f        # Voir les logs
+  docker-compose restart        # Redémarrer
+  docker-compose ps             # État des services
+
+Avec Make:
+  make start                    # Démarrer
+  make stop                     # Arrêter
+  make logs                     # Logs
+  make db-shell                 # Accéder à PostgreSQL
+
+Base de données:
+  docker-compose exec postgres psql -U postgres -d keycevente
+
+Development local:
+  pnpm install                  # Installer les dépendances
+  pnpm dev                      # Démarrer le serveur de dev
+  pnpm build                    # Build de production
+
+================================================================================
+
+📁 STRUCTURE DU PROJET
+
+  app/
+    ├── api/              # API Routes (Backend)
+    ├── page.tsx          # Accueil
+    ├── catalog/          # Catalogue
+    ├── product/[id]/     # Détails produit
+    ├── cart/             # Panier
+    ├── checkout/         # Commande
+    └── order-confirmation/ # Confirmation
+
+  components/            # React components
+  lib/                   # Utilitaires et types
+  scripts/               # Scripts de migration/seed
+  
+  Dockerfile             # Build production
+  docker-compose.yml     # Orchestration
+  .env.local            # Configuration (créer depuis .env.example)
+
+================================================================================
+
+✨ FONCTIONNALITÉS
+
+  ✓ Homepage avec produits en vedette
+  ✓ Catalogue avec filtrage et recherche
+  ✓ Détails produits complets
+  ✓ Panier persistant (session-based)
+  ✓ Formulaire de commande avec validation
+  ✓ Confirmation et récapitulatif commande
+  ✓ Base de données PostgreSQL complète
+  ✓ API RESTful fonctionnelle
+  ✓ Design moderne avec Tailwind CSS
+  ✓ Fully containerized with Docker
+
+================================================================================
+
+🔧 CONFIGURATION
+
+Fichier .env.local (créer depuis .env.example):
+
+  DB_USER=postgres              # Utilisateur PostgreSQL
+  DB_PASSWORD=postgres          # Mot de passe (changer en production!)
+  DB_HOST=postgres              # Nom du service Docker
+  DB_PORT=5432                  # Port PostgreSQL
+  DB_NAME=keycevente           # Nom de la base
+  APP_PORT=3000                 # Port de l'app
+  NEXT_PUBLIC_API_URL=http://localhost:3000
+
+================================================================================
+
+🌐 ENDPOINTS API
+
+Catégories:
+  GET /api/categories
+
+Produits:
+  GET /api/products
+  GET /api/products?categoryId=1
+  GET /api/products?search=clavier
+  GET /api/products/1
+
+Panier:
+  GET /api/cart
+  POST /api/cart/items
+  PATCH /api/cart/items
+  DELETE /api/cart/items
+  DELETE /api/cart
+
+Commandes:
+  POST /api/orders
+  GET /api/orders/ORD-12345
+
+================================================================================
+
+📊 BASE DE DONNÉES
+
+4 catégories:
+  1. Claviers Mécaniques
+  2. Keycaps
+  3. Switches
+  4. Accessoires
+
+15+ produits avec:
+  - Noms et descriptions
+  - Prix en euros
+  - Images (URLs Unsplash)
+  - Stock disponible
+  - Catégories
+
+Tables:
+  - categories
+  - products
+  - carts
+  - cart_items
+  - orders
+  - order_items
+
+================================================================================
+
+🚀 DÉPLOIEMENT
+
+Plusieurs options disponibles:
+
+1. VPS + Docker Compose (recommandé)
+   → Voir DEPLOYMENT.md
+
+2. Vercel (frontend) + Backend externe
+   → Voir DEPLOYMENT.md
+
+3. Railway, Render, AWS, DigitalOcean
+   → Voir DEPLOYMENT.md
+
+================================================================================
+
+🔒 SÉCURITÉ
+
+- Parameterized queries (protection SQL injection)
+- Environment variables pour secrets
+- Session ID secure pour panier
+- Input validation frontend et backend
+- Certificats SSL en production
+
+IMPORTANT: Modifier les mots de passe en production!
+
+================================================================================
+
+⚠️ TROUBLESHOOTING
+
+Problème: Port 3000 déjà en utilisation
+Solution: Changer APP_PORT dans .env.local
+
+Problème: Base de données ne démarre pas
+Solution: docker-compose logs postgres
+
+Problème: Les styles ne s'affichent pas
+Solution: Attendre que Next.js compile (5-10s)
+
+Problème: Erreur de connexion DB
+Solution: Vérifier que PostgreSQL est "healthy":
+  docker-compose ps
+
+================================================================================
+
+📞 SUPPORT
+
+Documentation:
+  - README_KEYCEVENTE.md pour guide détaillé
+  - DEPLOYMENT.md pour produire production
+  - Code source bien commenté
+
+Stack utilisée:
+  - Next.js 16 (Framework)
+  - React 19 (UI Library)
+  - TypeScript (Type Safety)
+  - Tailwind CSS (Styling)
+  - PostgreSQL 16 (Database)
+  - Docker (Containerization)
+
+================================================================================
+
+✅ TODO APRÈS DÉMARRAGE
+
+[ ] Tester la navigation (Home → Catalog → Product → Cart → Checkout)
+[ ] Vérifier la base de données (docker-compose exec postgres psql...)
+[ ] Ajouter plus de produits si nécessaire
+[ ] Configurer le domaine et SSL en production
+[ ] Mettre en place les backups automatiques
+[ ] Configurer le monitoring
+[ ] Customiser le design si besoin
+
+================================================================================
+
+🎉 Prêt à l'emploi!
+
+keycevente est un MVP complet et fonctionnel. 
+Démarrez avec Docker et commencez à vendre!
+
+Questions? Voir README_KEYCEVENTE.md ou DEPLOYMENT.md
+
+================================================================================
