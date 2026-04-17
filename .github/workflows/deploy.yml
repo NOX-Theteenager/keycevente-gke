@@ -1,0 +1,46 @@
+name: Deploy to GKE
+
+on:
+  push:
+    branches: [ main ] # Se déclenche sur la branche principale
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Authentification Google Cloud
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    # Configuration de la CLI gcloud
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+
+    # Configuration de Docker pour Artifact Registry
+    - name: Configure Docker
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+    # Build et Push de l'image
+    - name: Build and Push
+      run: |
+        docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/keycevente-repo/keycevente-app:${{ github.sha }} .
+        docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/keycevente-repo/keycevente-app:${{ github.sha }}
+
+    # Déploiement sur GKE
+    - name: Deploy to GKE
+      uses: 'google-github-actions/get-gke-credentials@v2'
+      with:
+        cluster_name: 'keycevente-cluster'
+        location: 'europe-west1'
+
+    - name: Update Kubernetes Deployment
+      run: |
+        kubectl set image deployment/keycevente-app keycevente-container=europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/keycevente-repo/keycevente-app:${{ github.sha }}
+        kubectl rollout status deployment/keycevente-app
